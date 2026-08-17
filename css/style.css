@@ -97,6 +97,8 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
   -webkit-text-size-adjust: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -2369,6 +2371,17 @@ p:last-child {
     --section-py-sm: 3rem;
   }
 
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    max-width: 100%;
+  }
+
   .nav-links,
   .nav-cta {
     display: none;
@@ -2389,15 +2402,46 @@ p:last-child {
   .hero {
     min-height: auto;
     padding: 8rem 0 4rem;
+    overflow: hidden;
+  }
+
+  .hero .container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding-top: 4rem;
+    padding-bottom: 2rem;
   }
 
   .hero h1 {
-    font-size: clamp(2rem, 6vw, 2.75rem);
+    font-size: clamp(1.75rem, 6vw, 2.75rem);
+  }
+
+  .hero p {
+    font-size: var(--font-size-base);
+  }
+
+  .hero-badge {
+    font-size: var(--font-size-xs);
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .hero-buttons .btn {
+    width: 100%;
+    text-align: center;
   }
 
   .hero-stats {
     flex-wrap: wrap;
     gap: 1.5rem;
+    justify-content: flex-start;
+  }
+
+  .hero-visual-graphic {
+    display: none;
   }
 
   .stats-grid {
@@ -2413,6 +2457,22 @@ p:last-child {
     font-size: var(--font-size-3xl);
   }
 
+  .stat-label {
+    font-size: var(--font-size-xs);
+  }
+
+  .section-header {
+    margin-bottom: 2rem;
+  }
+
+  .section-header h2 {
+    font-size: clamp(1.5rem, 5vw, 2.25rem);
+  }
+
+  .section-header p {
+    font-size: var(--font-size-base);
+  }
+
   .services-grid,
   .products-grid,
   .why-grid,
@@ -2420,10 +2480,23 @@ p:last-child {
   .portfolio-full-grid,
   .services-detail-grid {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .service-card,
+  .product-card,
+  .why-card,
+  .portfolio-card {
+    padding: 1.5rem;
   }
 
   .industries-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .industry-card {
+    padding: 1.25rem 1rem;
   }
 
   .values-grid {
@@ -2432,6 +2505,7 @@ p:last-child {
 
   .team-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
   }
 
   .workflow-grid {
@@ -2440,6 +2514,11 @@ p:last-child {
 
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
 
   .footer-grid {
@@ -2452,6 +2531,10 @@ p:last-child {
     text-align: center;
   }
 
+  .footer-bottom-links {
+    justify-content: center;
+  }
+
   .solutions-grid {
     grid-template-columns: 1fr;
   }
@@ -2462,6 +2545,83 @@ p:last-child {
 
   .cta-banner {
     padding: 2.5rem 1.5rem;
+    border-radius: var(--radius-xl);
+  }
+
+  .cta-banner h2 {
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+  }
+
+  .cta-banner p {
+    font-size: var(--font-size-base);
+  }
+
+  .page-hero {
+    padding: 7rem 0 3rem;
+  }
+
+  .page-hero h1 {
+    font-size: clamp(1.5rem, 5vw, 2.25rem);
+  }
+
+  .about-story-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .about-features {
+    grid-template-columns: 1fr;
+  }
+
+  .portfolio-filter {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .portfolio-filter-btn {
+    font-size: var(--font-size-xs);
+    padding: 0.5rem 1rem;
+  }
+
+  .testimonial-card {
+    padding: 0 0.5rem;
+  }
+
+  .testimonial-content {
+    padding: 2rem 1.25rem;
+  }
+
+  .testimonial-text {
+    font-size: var(--font-size-base);
+  }
+
+  .whatsapp-float {
+    bottom: 16px;
+    right: 16px;
+    width: 52px;
+    height: 52px;
+  }
+
+  .whatsapp-float svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .back-to-top {
+    bottom: 80px;
+    right: 16px;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .about-image,
+  .portfolio-card-image,
+  .product-card-image {
+    width: 100%;
+    height: auto;
   }
 }
 
@@ -2472,8 +2632,18 @@ p:last-child {
     --section-py: 3rem;
   }
 
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
   .hero {
-    padding: 7rem 0 3rem;
+    padding: 7rem 0 2.5rem;
   }
 
   .hero-buttons {
@@ -2482,16 +2652,17 @@ p:last-child {
 
   .hero-buttons .btn {
     width: 100%;
+    text-align: center;
   }
 
   .hero-stats {
     flex-direction: column;
-    align-items: center;
-    gap: 1.25rem;
+    align-items: flex-start;
+    gap: 1rem;
   }
 
   .hero-stat {
-    text-align: center;
+    text-align: left;
   }
 
   .stats-grid {
@@ -2500,11 +2671,11 @@ p:last-child {
   }
 
   .stat-item {
-    padding: 1rem;
+    padding: 1rem 0.5rem;
   }
 
   .section-header {
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
   }
 
   .about-features {
@@ -2515,16 +2686,49 @@ p:last-child {
     grid-template-columns: 1fr;
   }
 
+  .industry-card {
+    padding: 1rem;
+  }
+
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+
   .testimonial-content {
-    padding: 2rem 1.5rem;
+    padding: 1.5rem 1rem;
   }
 
   .contact-form {
-    padding: 1.5rem;
+    padding: 1.25rem;
   }
 
   .cta-banner {
-    padding: 2rem 1.25rem;
-    border-radius: var(--radius-xl);
+    padding: 2rem 1rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .portfolio-filter-btn {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.75rem;
+  }
+
+  .page-hero {
+    padding: 6rem 0 2rem;
+  }
+
+  .page-hero h1 {
+    font-size: 1.5rem;
+  }
+
+  .breadcrumb {
+    font-size: var(--font-size-xs);
+  }
+
+  .footer-col h4 {
+    font-size: var(--font-size-sm);
+  }
+
+  .footer-col a {
+    font-size: var(--font-size-xs);
   }
 }
