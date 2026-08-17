@@ -1,32 +1,32 @@
 /* ============================================
-   TECHZONE BUSINESS - Main Stylesheet
+   GUREY COMPANY - Main Stylesheet
    Modern Technology Company Website
    ============================================ */
 
 /* ---- CSS Custom Properties ---- */
 :root {
   /* Colors */
-  --navy: #0B1D3A;
-  --navy-light: #132D5E;
-  --navy-dark: #071225;
-  --teal: #0EA5A0;
-  --teal-light: #14D4CE;
-  --teal-dark: #0B8A86;
-  --teal-bg: rgba(14, 165, 160, 0.08);
+  --navy: #1a0a2e;
+  --navy-light: #2d1b4e;
+  --navy-dark: #0f0521;
+  --teal: #8B5CF6;
+  --teal-light: #A78BFA;
+  --teal-dark: #7C3AED;
+  --teal-bg: rgba(139, 92, 246, 0.08);
   --accent: #F59E0B;
   --accent-light: #FBBF24;
   --white: #FFFFFF;
-  --off-white: #F1F5F9;
-  --gray-50: #F8FAFC;
-  --gray-100: #F1F5F9;
-  --gray-200: #E2E8F0;
-  --gray-300: #CBD5E1;
-  --gray-400: #94A3B8;
-  --gray-500: #64748B;
-  --gray-600: #475569;
-  --gray-700: #334155;
-  --gray-800: #1E293B;
-  --gray-900: #0F172A;
+  --off-white: #F5F3FF;
+  --gray-50: #FAF5FF;
+  --gray-100: #F3E8FF;
+  --gray-200: #E9D5FF;
+  --gray-300: #D8B4FE;
+  --gray-400: #A78BFA;
+  --gray-500: #7C3AED;
+  --gray-600: #5B21B6;
+  --gray-700: #4C1D95;
+  --gray-800: #3B0764;
+  --gray-900: #1E0538;
   --success: #10B981;
   --danger: #EF4444;
 
@@ -34,9 +34,9 @@
   --gradient-navy: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
   --gradient-teal: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 100%);
   --gradient-hero: linear-gradient(160deg, var(--navy-dark) 0%, var(--navy) 40%, var(--navy-light) 100%);
-  --gradient-card: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(14,165,160,0.03) 100%);
+  --gradient-card: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(139,92,246,0.03) 100%);
   --gradient-accent: linear-gradient(135deg, var(--teal) 0%, var(--teal-light) 100%);
-  --gradient-overlay: linear-gradient(180deg, rgba(11,29,58,0.92) 0%, rgba(11,29,58,0.75) 100%);
+  --gradient-overlay: linear-gradient(180deg, rgba(26,10,46,0.92) 0%, rgba(26,10,46,0.75) 100%);
 
   /* Typography */
   --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -70,9 +70,9 @@
   --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
   --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
-  --shadow-teal: 0 4px 14px rgba(14, 165, 160, 0.25);
-  --shadow-card: 0 4px 24px rgba(11, 29, 58, 0.08);
-  --shadow-card-hover: 0 12px 40px rgba(11, 29, 58, 0.15);
+  --shadow-teal: 0 4px 14px rgba(139, 92, 246, 0.25);
+  --shadow-card: 0 4px 24px rgba(26, 10, 46, 0.08);
+  --shadow-card-hover: 0 12px 40px rgba(26, 10, 46, 0.15);
 
   /* Transitions */
   --transition-fast: 150ms ease;
@@ -287,7 +287,7 @@ p:last-child {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(14, 165, 160, 0.35);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.35);
 }
 
 .btn-secondary {
@@ -497,7 +497,7 @@ p:last-child {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(11, 29, 58, 0.97);
+  background: rgba(26, 10, 46, 0.97);
   backdrop-filter: blur(20px);
   z-index: var(--z-modal);
   padding: 5rem 2rem 2rem;
@@ -558,7 +558,7 @@ p:last-child {
   right: -20%;
   width: 800px;
   height: 800px;
-  background: radial-gradient(circle, rgba(14,165,160,0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -570,7 +570,7 @@ p:last-child {
   left: -10%;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(14,165,160,0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -607,8 +607,8 @@ p:last-child {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(14, 165, 160, 0.15);
-  border: 1px solid rgba(14, 165, 160, 0.25);
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.25);
   padding: 0.5rem 1rem;
   border-radius: var(--radius-full);
   font-size: var(--font-size-sm);
@@ -700,7 +700,7 @@ p:last-child {
 .hero-orb-1 {
   width: 300px;
   height: 300px;
-  background: linear-gradient(135deg, var(--teal) 0%, rgba(14,165,160,0.3) 100%);
+  background: linear-gradient(135deg, var(--teal) 0%, rgba(139,92,246,0.3) 100%);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -720,7 +720,7 @@ p:last-child {
 .hero-orb-3 {
   width: 150px;
   height: 150px;
-  background: linear-gradient(135deg, rgba(14,165,160,0.3) 0%, rgba(11,29,58,0.3) 100%);
+  background: linear-gradient(135deg, rgba(139,92,246,0.3) 0%, rgba(26,10,46,0.3) 100%);
   bottom: 15%;
   left: 10%;
   filter: blur(25px);
@@ -1075,14 +1075,14 @@ p:last-child {
 
 .why-card:hover {
   background: rgba(255,255,255,0.1);
-  border-color: rgba(14, 165, 160, 0.3);
+  border-color: rgba(139, 92, 246, 0.3);
   transform: translateY(-4px);
 }
 
 .why-card-icon {
   width: 52px;
   height: 52px;
-  background: rgba(14, 165, 160, 0.15);
+  background: rgba(139, 92, 246, 0.15);
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
@@ -1201,7 +1201,7 @@ p:last-child {
   left: 0;
   right: 0;
   padding: 2rem 1.5rem 1.5rem;
-  background: linear-gradient(0deg, rgba(11,29,58,0.95) 0%, rgba(11,29,58,0.5) 60%, transparent 100%);
+  background: linear-gradient(0deg, rgba(26,10,46,0.95) 0%, rgba(26,10,46,0.5) 60%, transparent 100%);
   transform: translateY(20px);
   opacity: 0;
   transition: all var(--transition-base);
@@ -1215,7 +1215,7 @@ p:last-child {
 .portfolio-card-tag {
   display: inline-block;
   padding: 0.2rem 0.6rem;
-  background: rgba(14, 165, 160, 0.2);
+  background: rgba(139, 92, 246, 0.2);
   color: var(--teal-light);
   font-size: var(--font-size-xs);
   font-weight: 600;
@@ -1538,7 +1538,7 @@ p:last-child {
   right: -20%;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(14,165,160,0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -1719,7 +1719,7 @@ p:last-child {
   right: -15%;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(14,165,160,0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -1873,7 +1873,7 @@ p:last-child {
 .form-select:focus,
 .form-textarea:focus {
   border-color: var(--teal);
-  box-shadow: 0 0 0 3px rgba(14, 165, 160, 0.1);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
 
 .form-input::placeholder,
@@ -2241,6 +2241,34 @@ p:last-child {
 .reveal-delay-4 { transition-delay: 0.4s; }
 .reveal-delay-5 { transition-delay: 0.5s; }
 .reveal-delay-6 { transition-delay: 0.6s; }
+
+/* ---- WhatsApp Floating Button ---- */
+.whatsapp-float {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 60px;
+  height: 60px;
+  background: #25D366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+  z-index: 999;
+  transition: all 0.3s ease;
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 30px rgba(37, 211, 102, 0.5);
+}
+
+.whatsapp-float svg {
+  width: 32px;
+  height: 32px;
+}
 
 /* ============================================
    RESPONSIVE DESIGN
