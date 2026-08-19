@@ -346,70 +346,111 @@
   }
 
   /* ============================================
-     AI CHATBOT WIDGET — Multi-Language
+     AI CHATBOT WIDGET — Multi-Language + Translation
      ============================================ */
 
-  /* ---- Language Detection ---- */
-  function detectLanguage(text) {
-    var t = text.trim();
+  /* ---- Exact Somali Greeting Map ---- */
+  var somaliGreetings = {
+    'asc': 1, 'salaam': 1, 'salama': 1, 'salaan': 1, 'soo dhowaw': 1,
+    'soo dhawoow': 1, 'hello': 1, 'kaa wanagsan': 1, 'subax wanagsan': 1,
+    'galab wanagsan': 1, 'habeen wanagsan': 1, 'wanagsan tahay': 1,
+    'iska warran': 1, 'waa sidee': 1, 'halkee tahay': 1, 'kaa yeelo': 1,
+    'mahadsanid': 1, 'nabadeysan': 1, 'salaanta': 1
+  };
 
-    // Arabic: check for Arabic Unicode block
+  /* ---- Language Detection (enhanced) ---- */
+  function detectLanguage(text) {
+    var t = text.trim().toLowerCase();
+
+    // 1. Exact Somali greeting match
+    if (somaliGreetings[t]) return 'so';
+
+    // 2. Arabic: Arabic Unicode block
     if (/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/.test(t)) return 'ar';
 
-    // Somali: common Somali words/patterns
-    var soWords = /\b(kaan|taan|waxaa|waa|aan|aad|ee|oo|ku|ka|la|iyo|sidoo|markaa|haddii|maxaa|sidee|qof|shirkad|nidaam|adeeg|bog|codsi|xirfad|macluumaad|khad|gismaa|qiimo|laakiin|hambalyo|mahadsanid|soo dhawoow|faafin|guriga|guri|lacag|shaqo|qalab|abuu|ismaaciil|ctaab|mashruuc|farsamada|soomaaliya)\b/i;
+    // 3. Somali: common Somali words/patterns
+    var soWords = /\b(kaan|taan|waxaa|waa|aan|aad|ee|oo|ku|ka|la|iyo|sidoo|markaa|haddii|maxaa|sidee|qof|shirkad|nidaam|adeeg|bog|codsi|xirfad|macluumaad|khad|qiimo|laakiin|hambalyo|mahadsanid|soo dhawoow|guriga|guri|lacag|shaqo|qalab|mashruuc|farsamada|soomaaliya|waxbarasho|caafimaad|ganacsi|dhaqaale|technology|xoolaha|beeraha|diblomaasiyad|arimaha|bulshada|dowlad|gaadiidka|iwm|sidaa|darteed|markasta|qofkasta|wixii|kuwa|intaa|kale|ugu|badan|yara|dhexe|sare|hoose|weyn|yar)\b/i;
     if (soWords.test(t)) return 'so';
 
-    // Turkish: common Turkish words + special chars
-    var trChars = /[çğıöşüÇĞİÖŞÜ]/;
-    var trWords = /\b(merhaba|nasıl|nedir|hizmet|iletişim|projeler|fiyat|teşekkür|şirket|gurey|yazılım|web|mobil|tasarım|hosting|dijital|hakkında|portföy|destek|iletişim|telefon|e-posta)\b/i;
-    if (trChars.test(t) || trWords.test(t)) return 'tr';
+    // 4. Turkish: special chars + common words
+    if (/[çğıöşüÇĞİÖŞÜ]/.test(t)) return 'tr';
+    var trWords = /\b(merhaba|selam|nasıl|nedir|hizmet|iletişim|projeler|fiyat|teşekkür|şirket|gurey|yazılım|web|mobil|tasarım|hosting|dijital|hakkında|portföy|destek|telefon|e-posta|günaydın|iyi|kötü|evet|hayır|lütfen|teşekkür|merhaba)\b/i;
+    if (trWords.test(t)) return 'tr';
 
-    // French: common French words
-    var frWords = /\b(bonjour|salut|merci|société|entreprise|services|contact|portfolio|prix|coût|combien|développement|logiciel|site|mobile|conception|hébergement|marque|à propos|aujourd'hui|de quoi|offres|sommaire)\b/i;
+    // 5. French: common French words
+    var frWords = /\b(bonjour|salut|merci|société|entreprise|services|contact|portfolio|prix|coût|combien|développement|logiciel|site|mobile|conception|hébergement|marque|à propos|aujourd'hui|de quoi|offres|comment|pourquoi|bonsoir|oui|non|s'il vous plaît|je suis|nous|vous|très|aussi|bien|mais|avec|pour|dans|cest|peut|faire|tout|plus|mon|votre|notre)\b/i;
     if (frWords.test(t)) return 'fr';
 
-    // English: default fallback (if none of the above matched)
+    // 6. English: default fallback
     return 'en';
   }
 
-  /* ---- Multi-language Response Database ---- */
+  /* ---- MyMemory Free Translation API ---- */
+  var translationCache = {};
+
+  function translateText(text, fromLang, toLang) {
+    if (fromLang === toLang) return Promise.resolve(text);
+    var cacheKey = fromLang + '_' + toLang + '_' + text;
+    if (translationCache[cacheKey]) return Promise.resolve(translationCache[cacheKey]);
+
+    var src = fromLang === 'so' ? 'so-SO' : fromLang;
+    var tgt = toLang === 'so' ? 'so-SO' : toLang;
+    var url = 'https://api.mymemory.translated.net/get?q=' +
+      encodeURIComponent(text) +
+      '&langpair=' + src + '|' + tgt;
+
+    return fetch(url)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.responseStatus === 200 && data.responseData && data.responseData.translatedText) {
+          var translated = data.responseData.translatedText;
+          translationCache[cacheKey] = translated;
+          return translated;
+        }
+        return text;
+      })
+      .catch(function() { return text; });
+  }
+
+  /* ---- English Response Database (master) ---- */
+  var enResponses = {
+    greeting: "Hello! Welcome to Gurey Company. How can I assist you today? I can help with our services, contact info, or founder details (Salah Ahmed Omar).",
+    services: "Gurey Company offers a wide range of technology services:\n\n- Software Development\n- Website Development\n- Mobile App Development\n- UI/UX Design\n- AI Solutions\n- Branding & Digital Marketing\n- Hosting & Domain\n- Business / ERP Solutions\n\nWould you like to know more about any specific service?",
+    contact: "You can reach us through:\n\n- Phone: +252 61 7684809\n- WhatsApp: +252 61 7684809\n- Email: saalahahmedomar123@gmail.com\n- Visit: Mogadishu, Somalia\n\nOr fill out the contact form on our website!",
+    about: "Gurey Company is Somalia's leading technology company, founded in Mogadishu in 2020 by Salah Ahmed Omar. We specialize in building software, websites, and mobile apps that empower businesses across Somalia and East Africa.\n\nWith 200+ completed projects and 50+ happy clients, we bring global standards to the local market.",
+    portfolio: "We've worked on exciting projects including:\n\n- Suuqa Muqdisho — E-Commerce Platform\n- SomaliRide — Mobile App\n- PrimePOS — Retail POS System\n\nVisit our Portfolio section to see all our work!",
+    pricing: "Project costs vary depending on scope, features, and complexity. We offer competitive pricing tailored to the Somali market. Contact us for a free consultation and quote!\n\nPhone: +252 61 7684809",
+    founder: "Gurey Company was founded by Salah Ahmed Omar in Mogadishu, Somalia in 2020. His vision was to bring world-class technology solutions to Somali businesses and drive digital transformation across East Africa.",
+    thank: "You're welcome! If you have any other questions, feel free to ask. Have a great day!",
+    default: "Thank you for your interest! I can help you with:\n\n- Our services\n- Contact information\n- About Gurey Company\n- Our portfolio\n- Pricing details\n- Information about our founder (Salah Ahmed Omar)\n\nWhat would you like to know?"
+  };
+
+  /* ---- Pre-translated responses for fast lookup ---- */
   var chatDB = {
-    en: {
-      greeting: "Hello! Welcome to Gurey Company. How can I assist you today?",
-      services: "Gurey Company offers a wide range of technology services:\n\n- Software Development\n- Website Development\n- Mobile App Development\n- UI/UX Design\n- AI Solutions\n- Branding & Digital Marketing\n- Hosting & Domain\n- Business / ERP Solutions\n\nWould you like to know more about any specific service?",
-      contact: "You can reach us through:\n\n- Phone: +252 61 7684809\n- WhatsApp: +252 61 7684809\n- Email: saalahahmedomar123@gmail.com\n- Visit: Mogadishu, Somalia\n\nOr fill out the contact form on our website!",
-      about: "Gurey Company is Somalia's leading technology company, founded in Mogadishu in 2020 by Salah Ahmed Omar. We specialize in building software, websites, and mobile apps that empower businesses across Somalia and East Africa.\n\nWith 200+ completed projects and 50+ happy clients, we bring global standards to the local market.",
-      portfolio: "We've worked on exciting projects including:\n\n- Suuqa Muqdisho — E-Commerce Platform\n- SomaliRide — Mobile App\n- PrimePOS — Retail POS System\n\nVisit our Portfolio section to see all our work!",
-      pricing: "Project costs vary depending on scope, features, and complexity. We offer competitive pricing tailored to the Somali market. Contact us for a free consultation and quote!\n\nPhone: +252 61 7684809",
-      founder: "Gurey Company was founded by Salah Ahmed Omar in Mogadishu, Somalia in 2020. His vision was to bring world-class technology solutions to Somali businesses and drive digital transformation across East Africa.",
-      thank: "You're welcome! If you have any other questions, feel free to ask. Have a great day!",
-      default: "Thank you for your interest! I can help you with:\n\n- Our services\n- Contact information\n- About Gurey Company\n- Our portfolio\n- Pricing details\n- Information about our founder\n\nWhat would you like to know?"
-    },
     ar: {
-      greeting: "!مرحباً بكم في شركة غوري. كيف يمكنني مساعدتكم اليوم؟",
-      services: "تقدم شركة غوري مجموعة واسعة من الخدمات التقنية:\n\n- تطوير البرمجيات\n- تطوير المواقع الإلكترونية\n- تطوير تطبيقات الهاتف\n- تصميم واجهة المستخدم وتجربة المستخدم\n- حلول الذكاء الاصطناعي\n- العلامة التجارية والتسويق الرقمي\n- الاستضافة والنطاق\n- حلول الأعمال وتخطيط 자원 المؤسسات\n\nهل تريد معرفة المزيد عن خدمة معينة؟",
+      greeting: "!مرحباً بكم في شركة غوري. كيف يمكنني مساعدتكم اليوم؟ يمكنني المساعدة في خدماتنا أو معلومات الاتصال أو تفاصيل المؤسس (صلاح أحمد عمر).",
+      services: "تقدم شركة غوري مجموعة واسعة من الخدمات التقنية:\n\n- تطوير البرمجيات\n- تطوير المواقع الإلكترونية\n- تطوير تطبيقات الهاتف\n- تصميم واجهة المستخدم وتجربة المستخدم\n- حلول الذكاء الاصطناعي\n- العلامة التجارية والتسويق الرقمي\n- الاستضافة والنطاق\n- حلول الأعمال وتخطيط موارد المؤسسات\n\nهل تريد معرفة المزيد عن خدمة معينة؟",
       contact: "يمكنكم التواصل معنا عبر:\n\n- الهاتف: +252 61 7684809\n- واتساب: +252 61 7684809\n- البريد الإلكتروني: saalahahmedomar123@gmail.com\n- زيارة: مقديشو، الصومال\n\nأو قم بملء نموذج الاتصال على موقعنا!",
       about: "شركة غوري هي الشركة التقنية الرائدة في الصومال، تأسست في مقديشو عام 2020 على يد صلاح أحمد عمر. نحن متخصصون في بناء البرمجيات والمواقع وتطبيقات الهاتف التي تمكّن الشركات في الصومال وشرق أفريقيا.\n\nمع أكثر من 200 مشروع مكتمل و 50 عميلاً سعيداً، نقدم معايير عالمية للسوق المحلي.",
       portfolio: "لقد عملنا على مشاريع مثيرة تشمل:\n\n- سوق مقديشو — منصة تجارة إلكترونية\n- SomaliRide — تطبيق هاتف\n- PrimePOS — نظام نقاط بيع تجزئة\n\nقم بزيارة قسم أعمالنا لرؤية جميع مشاريعنا!",
       pricing: "تختلف تكاليف المشروع حسب النطاق والميزات والتعقيد. نقدم أسعاراً تنافسية مصممة خصيصاً للسوق الصومالي. اتصل بنا للحصول على استشارة وعرض أسعار مجاني!\n\nالهاتف: +252 61 7684809",
       founder: "تأسست شركة غوري على يد صلاح أحمد عمر في مقديشو بالصومال عام 2020. كان رؤيته هي تقديم حلول تقنية عالمية المستوى لشركات الصومال وقيادة التحول الرقمي في شرق أفريقيا.",
       thank: "!شكراً لكم! إذا كان لديكم أي أسئلة أخرى، لا تترددوا في السؤال. عدا يوماً سعيداً",
-      default: "!شكراً لاهتمامكم يمكنني مساعدتكم في:\n\n- خدماتنا\n- معلومات الاتصال\n- عن شركة غوري\n- أعمالنا\n- تفاصيل الأسعار\n- معلومات عن المؤسس\n\nماذا تريد أن تعرف؟"
+      default: "!شكراً لاهتمامكم يمكنني مساعدتكم في:\n\n- خدماتنا\n- معلومات الاتصال\n- عن شركة غوري\n- أعمالنا\n- تفاصيل الأسعار\n- معلومات عن المؤسس (صلاح أحمد عمر)\n\nماذا تريد أن تعرف؟"
     },
     so: {
-      greeting: "Soo dhawoow Gurey Company! Sideen kuu caawin karaa maanta?",
+      greeting: "Waaleykuma Salaam! Kusoo dhowaw Gurey Company. Waxaan kaa caawin karaa Adeegyada, Xiriirka, ama Macluumaadka Aasaasaha (Salah Ahmed Omar).",
       services: "Gurey Company waxay bixisaa adeegyo technology ah oo dhamaystiran:\n\n- Horumarinta Software-ka\n- Samaynta Bogagga internetka\n- Horumarinta Barnaamijyada Mobile-ka\n- Naqshadaynta UI/UX\n- Xalka AI (Artificial Intelligence)\n- Branding & Suuq-geynta Dijitaalka ah\n- Hosting & Domain\n- Xalka Ganacsiga & ERP\n\nMa rabtaa inaad wax badan ka ogaato adeeg gaar ah?",
       contact: "Waxaad nagala soo xiriiri kartaa:\n\n- Telefoon: +252 61 7684809\n- WhatsApp: +252 61 7684809\n- Email: saalahahmedomar123@gmail.com\n- Booqo: Muqdisho, Soomaaliya\n\nAma buuxi foomka xiriirka ee bogga!",
-      about: "Gurey Company waa shirkadda technology ee ugu sarreeya Soomaaliya, waxaana la aasaasay Muqdisho 2020-kii. Waxaan ku takoorinnaa samaynta software, bogagga internetka, iyo barnaamijyada mobile-ka ee xoojiya ganacsatada Soomaaliya iyo Bariga Afrika.\n\nIn ka badan 200 mashruuc oo la dhammeeyay iyo 50+ macaamiil faraxsan, waxaan soo bandhignaa heerarka caalamiga ah suuqa maxalliga ah.",
+      about: "Gurey Company waa shirkadda technology ee ugu sarreeya Soomaaliya, waxaana la aasaasay Muqdisho 2020-kii oo la yiraahdo Salah Ahmed Omar. Waxaan ku takoorinnaa samaynta software, bogagga internetka, iyo barnaamijyada mobile-ka ee xoojiya ganacsatada Soomaaliya iyo Bariga Afrika.\n\nIn ka badan 200 mashruuc oo la dhammeeyay iyo 50+ macaamiil faraxsan, waxaan soo bandhignaa heerarka caalamiga ah suuqa maxalliga ah.",
       portfolio: "Waxaan qabanay mashruucyo xiiso leh oo ay ku jiraan:\n\n- Suuqa Muqdisho — Meel wax iibsi online ah\n- SomaliRide — Barnaamij Mobile ah\n- PrimePOS — Nidaamka Iibinta Retail-ka\n\nBooqo qaybta Portfolio-yadayada si aad u aragto dhammaan shaqadayada!",
       pricing: "Kharashyada mashruucu waxay ku kala duwan yihiin baahida, astaamaha, iyo adkaha. Waxaan bixinnaa qiimo tartan ah oo loogu talagalay suuqa Soomaaliya! Nagala soo xiriir wixii talooyin ah ama soo jeedin ah.\n\nTelefoon: +252 61 7684809",
       founder: "Gurey Company waxaa aasaasay Salah Ahmed Omar Muqdisho, Soomaaliya 2020-kii. Aragtidiisu waxay ahayd in la soo bandhigo xalalka technology ee heerka caalamiga ah ganacsatada Soomaaliya oo la hogaamiyo isbeddelka dijitaalka ah ee Bariga Afrika.",
       thank: "Mahadsanid! Haddii aad wax su'aalo ah qabtid, xor u noqo inaad weydiiso. Maalin wanaagsan!",
-      default: "Mahadsanid! Waxaan kuu caawin karaa:\n\n- Adeegyadayada\n- Macluumaadka xiriirka\n- Gurey Company\n- Portfolio-yadayada\n- Qiimaha\n- Macluumaad ku saabsan aasaasaha\n\nKumaa aad rabto inaad ogaato?"
+      default: "Mahadsanid! Waxaan kuu caawin karaa:\n\n- Adeegyadayada\n- Macluumaadka xiriirka\n- Gurey Company\n- Portfolio-yadayada\n- Qiimaha\n- Macluumaad ku saabsan aasaasaha (Salah Ahmed Omar)\n\nKumaa aad rabto inaad ogaato?"
     },
     tr: {
-      greeting: "Merhaba! Gurey Company'ye hoş geldiniz. Bugün size nasıl yardımcı olabilirim?",
+      greeting: "Merhaba! Gurey Company'ye hoş geldiniz. Bugün size nasıl yardımcı olabilirim? Hizmetlerimiz, iletişim bilgilerimiz veya kurucumuz (Salah Ahmed Omar) hakkında bilgi verebilirim.",
       services: "Gurey Company çeşitli teknoloji hizmetleri sunuyor:\n\n- Yazılım Geliştirme\n- Web Sitesi Geliştirme\n- Mobil Uygulama Geliştirme\n- UI/UX Tasarım\n- Yapay Zeka Çözümleri\n- Marka ve Dijital Pazarlama\n- Hosting & Domain\n- İş / ERP Çözümleri\n\nBelirli bir hizmet hakkında daha fazla bilgi ister misiniz?",
       contact: "Bize şu yollardan ulaşabilirsiniz:\n\n- Telefon: +252 61 7684809\n- WhatsApp: +252 61 7684809\n- E-posta: saalahahmedomar123@gmail.com\n- Ziyaret: Mogadişu, Somali\n\nWeb sitemizdeki iletişim formunu doldurun!",
       about: "Gurey Company, 2020 yılında Mogadişu'da Salah Ahmed Omar tarafından kurulan Somali'nin lider teknoloji şirketidir. Somali ve Doğu Afrika'daki işletmeleri güçlendiren yazılımlar, web siteleri ve mobil uygulamalar geliştiriyoruz.\n\n200'den fazla tamamlanmış proje ve 50+ mutlu müşteri ile yerel pazará global standartlar getiriyoruz.",
@@ -417,18 +458,18 @@
       pricing: "Proje maliyetleri kapsam, özellikler ve karmaşıklığa göre değişir. Somali pazarına özel rekabetçi fiyatlar sunuyoruz. Ücretsiz danışmanlık ve fiyat teklifi için bize ulaşın!\n\nTelefon: +252 61 7684809",
       founder: "Gurey Company, 2020 yılında Somali Mogadişu'da Salah Ahmed Omar tarafından kuruldu. Vizyonu, Somali işletmelerine dünya standartlarında teknoloji çözümleri sunmak ve Doğu Afrika'da dijital dönüşümü liderlik etmekti.",
       thank: "Rica ederim! Başka sorularınız olursa sormaktan çekinmeyin. İyi günler!",
-      default: "İlginiz için teşekkürler! Size şunlar hakkında yardımcı olabilirim:\n\n- Hizmetlerimiz\n- İletişim bilgileri\n- Hakkımızda\n- Portföyümüz\n- Fiyatlandırma\n- Kurucumuz hakkında bilgi\n\nNe öğrenmek istersiniz?"
+      default: "İlginiz için teşekkürler! Size şunlar hakkında yardımcı olabilirim:\n\n- Hizmetlerimiz\n- İletişim bilgileri\n- Hakkımızda\n- Portföyümüz\n- Fiyatlandırma\n- Kurucumuz hakkında bilgi (Salah Ahmed Omar)\n\nNe öğrenmek istersiniz?"
     },
     fr: {
-      greeting: "Bonjour! Bienvenue chez Gurey Company. Comment puis-je vous aider aujourd'hui?",
+      greeting: "Bonjour! Bienvenue chez Gurey Company. Comment puis-je vous aider aujourd'hui? Je peux vous renseigner sur nos services, nos coordonnées ou notre fondateur (Salah Ahmed Omar).",
       services: "Gurey Company propose une large gamme de services technologiques:\n\n- Développement logiciel\n- Développement de sites web\n- Développement d'applications mobiles\n- Design UI/UX\n- Solutions d'intelligence artificielle\n- Branding et marketing digital\n- Hébergement et domaine\n- Solutions Business / ERP\n\nVoulez-vous en savoir plus sur un service spécifique?",
       contact: "Vous pouvez nous contacter via:\n\n- Téléphone: +252 61 7684809\n- WhatsApp: +252 61 7684809\n- Email: saalahahmedomar123@gmail.com\n- Visite: Mogadiscio, Somalie\n\nOu remplissez le formulaire de contact sur notre site!",
-      about: "Gurey Company est la entreprise technologique leader de la Somalie, fondée à Mogadiscio en 2020 par Salah Ahmed Omar. Nous nous spécialisons dans la création de logiciels, de sites web et d'applications mobiles qui renforcent les entreprises en Somalie et en Afrique de l'Est.\n\nAvec plus de 200 projets réalisés et 50+ clients satisfaits, nous apportons des standards mondiaux au marché local.",
+      about: "Gurey Company est l'entreprise technologique leader de la Somalie, fondée à Mogadiscio en 2020 par Salah Ahmed Omar. Nous nous spécialisons dans la création de logiciels, de sites web et d'applications mobiles qui renforcent les entreprises en Somalie et en Afrique de l'Est.\n\nAvec plus de 200 projets réalisés et 50+ clients satisfaits, nous apportons des standards mondiaux au marché local.",
       portfolio: "Nous avons travaillé sur des projets passionnants:\n\n- Suuqa Muqdisho — Plateforme e-commerce\n- SomaliRide — Application mobile\n- PrimePOS — Système de point de vente\n\nVisitez notre section Portfolio pour voir tout notre travail!",
       pricing: "Les coûts de projet varient selon la portée, les fonctionnalités et la complexité. Nous offrons des prix compétitifs adaptés au marché somalien. Contactez-nous pour une consultation et un devis gratuit!\n\nTéléphone: +252 61 7684809",
       founder: "Gurey Company a été fondée par Salah Ahmed Omar à Mogadiscio, Somalie en 2020. Sa vision était d'apporter des solutions technologiques de classe mondiale aux entreprises somaliennes et de mener la transformation numérique en Afrique de l'Est.",
       thank: "De rien! Si vous avez d'autres questions, n'hésitez pas à demander. Bonne journée!",
-      default: "Merci pour votre intérêt! Je peux vous aider avec:\n\n- Nos services\n- Informations de contact\n- À propos de Gurey Company\n- Notre portfolio\n- Détails sur les prix\n- Informations sur le fondateur\n\nQue souhaitez-vous savoir?"
+      default: "Merci pour votre intérêt! Je peux vous aider avec:\n\n- Nos services\n- Informations de contact\n- À propos de Gurey Company\n- Notre portfolio\n- Détails sur les prix\n- Informations sur le fondateur (Salah Ahmed Omar)\n\nQue souhaitez-vous savoir?"
     }
   };
 
@@ -436,49 +477,68 @@
   function detectIntent(msg) {
     var m = msg.toLowerCase();
 
-    // Greetings
-    if (/^(hello|hi|hey|howdy|good\s*(morning|afternoon|evening)|yo)\b/.test(m)) return 'greeting';
-    if (/^(merhaba|selam|hey|günaydın|iyi\s*günler|nasılsın)\b/.test(m)) return 'greeting';
+    // Greetings (all languages)
+    if (/^(hello|hi|hey|howdy|yo|good\s*(morning|afternoon|evening))\b/.test(m)) return 'greeting';
+    if (/^(asc|salaam|salama|salaan|soo\s*dhowa|soo\s*dhawoow|kaa\s*wanagsan|subax\s*wanagsan|galab\s*wanagsan|habeen\s*wanagsan|wanagsan\s*tahay|iska\s*warran|waa\s*sidee|nabadeysan)\b/.test(m)) return 'greeting';
+    if (/^(merhaba|selam|günaydın|iyi\s*günler|nasılsın)\b/.test(m)) return 'greeting';
     if (/^(bonjour|salut|coucou|bonsoir|comment\s*(allez|ça va))/.test(m)) return 'greeting';
-    if (/^(salaan|soo\s*dhawoow|hello|kaa\s*wanagsan|subax\s*wanagsan)\b/.test(m)) return 'greeting';
     if (/^(مرحبا|أهلا|السلام عليكم|صباح|مساء|هاي|هلا)\b/.test(m)) return 'greeting';
 
     // Services
-    if (/\b(service|hizmet|adeeg|service|développement|logiciel|yazılım|software|web|mobil|tasarım|design|hosting|branding|pazarlama|marketing|AI|erp|nidaam|xorriyad)\b/.test(m)) return 'services';
-    if (/\b(adeegy|xaal|bixi|samayn|horumar)\b/.test(m)) return 'services';
+    if (/\b(service|adeeg|_services|hizmet|développement|logiciel|yazılım|software|web|mobil|tasarım|design|hosting|branding|pazarlama|marketing|ai|erp|nidaam|xorriyad|horumar|samayn)\b/.test(m)) return 'services';
+    if (/\b(adeegy|bixi|xaal)\b/.test(m)) return 'services';
     if (/\b(خدمات|تطوير|تصميم|استضافة|تسويق)\b/.test(m)) return 'services';
 
     // Contact
-    if (/\b(contact|iletişim|xiriir|téléphone|telefon|phone|email|whatsapp|address|visited|reach|foofo|hel|qab|nagala\s*xiriir|how\s*can\s*i\s*(reach|contact|call))\b/.test(m)) return 'contact';
-    if (/\b(اتصال|هاتف|بريد|วิธี|كيف|تواصل)\b/.test(m)) return 'contact';
+    if (/\b(contact|xiriir|iletişim|téléphone|telefon|phone|email|whatsapp|address|visited|reach|foofo|hel|qab|nagala\s*xiriir|how\s*can\s*i\s*(reach|contact|call))\b/.test(m)) return 'contact';
+    if (/\b(اتصال|هاتف|بريد|تواصل)\b/.test(m)) return 'contact';
 
     // About / Company
-    if (/\b(about|who|what\s*is|tell\s*me\s*about|company|şirket|shirkad|société|şirket|hakkında|la société|ka\s*guri|gurey)\b/.test(m)) return 'about';
+    if (/\b(about|who|what\s*is|tell\s*me\s*about|company|şirket|shirkad|société|hakkında|la\s*société|ka\s*guri|gurey|waa\s*maxay|maxaa\s* tahay|kumaa\s*ad\s*tihiin)\b/.test(m)) return 'about';
     if (/\b(من\s*أنتم|عن\s*الشركة|شركة)\b/.test(m)) return 'about';
 
     // Portfolio
-    if (/\b(portfolio|project|work|projet|proje|mashruuc|works|çalışma|projects)\b/.test(m)) return 'portfolio';
+    if (/\b(portfolio|project|work|projet|proje|mashruuc|works|çalışma|projects|shaqo)\b/.test(m)) return 'portfolio';
     if (/\b(أعمال|مشاريع)\b/.test(m)) return 'portfolio';
 
     // Pricing
-    if (/\b(price|cost|how\s*much|fiyat|qiimo|combien|prix|kharash|quota|quote)\b/.test(m)) return 'pricing';
+    if (/\b(price|cost|how\s*much|fiyat|qiimo|combien|prix|kharash|quota|quote|lacag|qadar)\b/.test(m)) return 'pricing';
     if (/\b(ثمن|التكلفة|كم\s*السعر)\b/.test(m)) return 'pricing';
 
     // Founder
     if (/\b(founder|aasaasaha|aasaasay|kurucu|fondateur|المؤسس|salah\s*ahmed\s*omar|salah|omar)\b/.test(m)) return 'founder';
 
     // Thanks
-    if (/\b(thank|teşekkür|mahadsanid|mahadsantah|squared|sacanid|merci|shukran|شكراً|teşekkürler)\b/.test(m)) return 'thank';
+    if (/\b(thank|teşekkür|mahadsanid|mahadsantah|sacanid|merci|shukran|شكراً|teşekkürler)\b/.test(m)) return 'thank';
 
     return 'default';
   }
 
-  /* ---- Bot Response Generator ---- */
+  /* ---- Main Response Generator (with translation fallback) ---- */
   function getBotResponse(userMessage) {
     var lang = detectLanguage(userMessage);
     var intent = detectIntent(userMessage);
-    var responses = chatDB[lang] || chatDB['en'];
-    return responses[intent] || responses['default'];
+
+    // Fast path: pre-translated response available
+    if (chatDB[lang] && chatDB[lang][intent]) {
+      return Promise.resolve(chatDB[lang][intent]);
+    }
+
+    // Fallback: get English response and translate to user's language
+    var enResponse = enResponses[intent] || enResponses['default'];
+
+    if (lang === 'en') {
+      return Promise.resolve(enResponse);
+    }
+
+    // Use MyMemory API to translate
+    return translateText(enResponse, 'en', lang === 'so' ? 'so' : lang)
+      .then(function(translated) {
+        return translated;
+      })
+      .catch(function() {
+        return enResponse;
+      });
   }
 
   /* ---- Chatbot UI ---- */
@@ -537,7 +597,9 @@
       if (!text) return;
       addUserMessage(text);
       chatbotInput.value = '';
-      addBotMessage(getBotResponse(text));
+      getBotResponse(text).then(function(reply) {
+        addBotMessage(reply);
+      });
     });
   }
 
@@ -545,7 +607,9 @@
     btn.addEventListener('click', function() {
       var reply = this.getAttribute('data-reply');
       addUserMessage(reply);
-      addBotMessage(getBotResponse(reply));
+      getBotResponse(reply).then(function(msg) {
+        addBotMessage(msg);
+      });
       var qrContainer = this.parentElement;
       if (qrContainer) qrContainer.style.display = 'none';
     });
