@@ -439,6 +439,7 @@
     greeting: "Hello! Welcome to Gurey Company. How can I assist you today? I can help with our services, contact info, or founder details (Salah Ahmed Omar).",
     services: "Gurey Company offers a wide range of technology services:\n\n- Software Development\n- Website Development\n- Mobile App Development\n- UI/UX Design\n- AI Solutions\n- Branding & Digital Marketing\n- Hosting & Domain\n- Business / ERP Solutions\n\nWould you like to know more about any specific service?",
     contact: "You can reach us through:\n\n- Phone: +252 61 7684809\n- WhatsApp: +252 61 7684809\n- Email: saalahahmedomar123@gmail.com\n- Visit: Mogadishu, Somalia\n\nOr fill out the contact form on our website!",
+    hire: "To get a job or service from us, you can directly contact Gurey Company management or Founder Salah Ahmed Omar:\n\n- WhatsApp/Phone: +252 61 7684809\n- Email: saalahahmedomar123@gmail.com\n- Website: www.gurey.so\n\nYou can also click the WhatsApp button at the bottom right corner.",
     about: "Gurey Company is Somalia's leading technology company, founded in Mogadishu in 2020 by Salah Ahmed Omar. We specialize in building software, websites, and mobile apps that empower businesses across Somalia and East Africa.\n\nWith 200+ completed projects and 50+ happy clients, we bring global standards to the local market.",
     portfolio: "We've worked on exciting projects including:\n\n- Suuqa Muqdisho — E-Commerce Platform\n- SomaliRide — Mobile App\n- PrimePOS — Retail POS System\n\nVisit our Portfolio section to see all our work!",
     pricing: "Project costs vary depending on scope, features, and complexity. We offer competitive pricing tailored to the Somali market. Contact us for a free consultation and quote!\n\nPhone: +252 61 7684809",
@@ -464,6 +465,7 @@
       greeting: "Waaleykuma Salaam! Kusoo dhowaw Gurey Company. Waxaan kaa caawin karaa Adeegyada, Xiriirka, ama Macluumaadka Aasaasaha (Salah Ahmed Omar).",
       services: "Gurey Company waxay bixisaa adeegyo technology ah oo dhamaystiran:\n\n- Horumarinta Software-ka\n- Samaynta Bogagga internetka\n- Horumarinta Barnaamijyada Mobile-ka\n- Naqshadaynta UI/UX\n- Xalka AI (Artificial Intelligence)\n- Branding & Suuq-geynta Dijitaalka ah\n- Hosting & Domain\n- Xalka Ganacsiga & ERP\n\nMa rabtaa inaad wax badan ka ogaato adeeg gaar ah?",
       contact: "Waxaad nagala soo xiriiri kartaa:\n\n- Telefoon: +252 61 7684809\n- WhatsApp: +252 61 7684809\n- Email: saalahahmedomar123@gmail.com\n- Booqo: Muqdisho, Soomaaliya\n\nAma buuxi foomka xiriirka ee bogga!",
+      hire: "Si aad shaqo ama adeeg nooga hesho, waxaad toos ula xiriiri kartaa maamulka Gurey Company ama Aasaasaha Salah Ahmed Omar:\n\n- WhatsApp/Telefoon: +252 61 7684809\n- Email: saalahahmedomar123@gmail.com\n- Bogga: www.gurey.so\n\nSidoo kale waxaad riixi kartaa batoonka WhatsApp-ka ee dhanka hoose ku yaalla.",
       about: "Gurey Company waa shirkadda technology ee ugu sarreeya Soomaaliya, waxaana la aasaasay Muqdisho 2020-kii oo la yiraahdo Salah Ahmed Omar. Waxaan ku takoorinnaa samaynta software, bogagga internetka, iyo barnaamijyada mobile-ka ee xoojiya ganacsatada Soomaaliya iyo Bariga Afrika.\n\nIn ka badan 200 mashruuc oo la dhammeeyay iyo 50+ macaamiil faraxsan, waxaan soo bandhignaa heerarka caalamiga ah suuqa maxalliga ah.",
       portfolio: "Waxaan qabanay mashruucyo xiiso leh oo ay ku jiraan:\n\n- Suuqa Muqdisho — Meel wax iibsi online ah\n- SomaliRide — Barnaamij Mobile ah\n- PrimePOS — Nidaamka Iibinta Retail-ka\n\nBooqo qaybta Portfolio-yadayada si aad u aragto dhammaan shaqadayada!",
       pricing: "Kharashyada mashruucu waxay ku kala duwan yihiin baahida, astaamaha, iyo adkaha. Waxaan bixinnaa qiimo tartan ah oo loogu talagalay suuqa Soomaaliya! Nagala soo xiriir wixii talooyin ah ama soo jeedin ah.\n\nTelefoon: +252 61 7684809",
@@ -495,11 +497,11 @@
     }
   };
 
-  /* ---- Intent Detection (uses sanitized input) ---- */
+  /* ---- Intent Detection (expanded, multi-word) ---- */
   function detectIntent(msg) {
     var m = sanitizeInput(msg);
 
-    // IMMEDIATE Somali greeting bypass (return 'greeting' but caller forces 'so')
+    // IMMEDIATE Somali greeting bypass
     if (somaliGreetings[m]) return 'greeting';
 
     // IMMEDIATE Somali thank bypass
@@ -511,13 +513,16 @@
     if (/^(bonjour|salut|coucou|bonsoir|comment\s*(allez|ça va))/.test(m)) return 'greeting';
     if (/^(مرحبا|أهلا|السلام عليكم|صباح|مساء|هاي|هلا)\b/.test(m)) return 'greeting';
 
+    // Somali Hire/Contact — PRIORITY (catch full sentences)
+    if (/\b(xiriira|ila\s*xiriir|la\s*xiriiraa|nagala\s*xiriir|nambar|nambar\s*telefoon|telefoon\s*nambar|shaqo|shaqo\s*qabato|shaqo\s*rabaa|shaqo\s*doonayo|adeeg|adeeg\s*rabo|adeeg\s*doonayo|hadaan\s*rabo|hadaan\s*doonayo|yaan\s*la|xiriir\s*ayaan\s*raadinayaa|work\s*with|hire|hire\s*me|i\s*need|contact\s*you|get\s*in\s*touch|how\s*can\s*i\s*reach|how\s*to\s*contact|work\s*for|job|employment)\b/.test(m)) return 'hire';
+
     // Services
     if (/\b(service|adeeg|hizmet|développement|logiciel|yazılım|software|web|mobil|tasarım|design|hosting|branding|pazarlama|marketing|ai|erp|nidaam|xorriyad|horumar|samayn)\b/.test(m)) return 'services';
     if (/\b(adeegy|bixi|xaal)\b/.test(m)) return 'services';
     if (/\b(خدمات|تطوير|تصميم|استضافة|تسويق)\b/.test(m)) return 'services';
 
-    // Contact
-    if (/\b(contact|xiriir|iletişim|téléphone|telefon|phone|email|whatsapp|address|visited|reach|foofo|hel|qab|nagala\s*xiriir)\b/.test(m)) return 'contact';
+    // Contact (general)
+    if (/\b(contact|iletişim|xiriir|téléphone|telefon|phone|email|whatsapp|address|foofo|hel|qab|nagala\s*xiriir)\b/.test(m)) return 'contact';
     if (/\b(اتصال|هاتف|بريد|تواصل)\b/.test(m)) return 'contact';
 
     // About / Company
@@ -525,7 +530,7 @@
     if (/\b(من\s*أنتم|عن\s*الشركة|شركة)\b/.test(m)) return 'about';
 
     // Portfolio
-    if (/\b(portfolio|project|work|projet|proje|mashruuc|works|çalışma|projects|shaqo)\b/.test(m)) return 'portfolio';
+    if (/\b(portfolio|project|work\s*sample|projet|proje|mashruuc|works|çalışma|projects|shaqo\s*qaran)\b/.test(m)) return 'portfolio';
     if (/\b(أعمال|مشاريع)\b/.test(m)) return 'portfolio';
 
     // Pricing
@@ -555,6 +560,11 @@
     // IMMEDIATE Somali response for Somali thanks (no translation)
     if (lang === 'so' && intent === 'thank') {
       return Promise.resolve(chatDB.so.thank);
+    }
+
+    // IMMEDIATE Somali response for hire/contact intent
+    if (lang === 'so' && intent === 'hire') {
+      return Promise.resolve(chatDB.so.hire);
     }
 
     // Fast path: pre-translated response available
