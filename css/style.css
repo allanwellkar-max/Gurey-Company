@@ -2247,8 +2247,8 @@ p:last-child {
 /* ---- WhatsApp Floating Button ---- */
 .whatsapp-float {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: 20px;
+  right: 20px;
   width: 60px;
   height: 60px;
   background: #25D366;
@@ -2258,7 +2258,7 @@ p:last-child {
   justify-content: center;
   color: white;
   box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
-  z-index: 999;
+  z-index: 9998;
   transition: all 0.3s ease;
 }
 
@@ -2608,6 +2608,11 @@ p:last-child {
   }
 
   .back-to-top {
+    bottom: 84px;
+    right: 16px;
+  }
+
+  .chatbot-widget {
     bottom: 80px;
     right: 16px;
   }
@@ -2921,8 +2926,8 @@ html[dir="rtl"] .lang-switcher {
    ============================================ */
 .chatbot-widget {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: 90px;
+  right: 20px;
   z-index: 9999;
 }
 

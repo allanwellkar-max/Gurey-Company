@@ -293,7 +293,7 @@
       hero_desc: "We build modern software, websites, and mobile apps that transform businesses and drive innovation across Somalia and East Africa.",
       hero_cta1: 'Explore Services', hero_cta2: 'View Our Work',
       stat_projects: 'Projects Completed', stat_clients: 'Happy Clients', stat_years: 'Years Experience',
-      founder_credit: 'Hindisaha: <strong>Salah Ahmed Omar</strong>',
+      founder_credit: 'Founded by: <strong>Salah Ahmed Omar</strong>',
     },
     ar: {
       brand: 'غوري',
@@ -305,7 +305,7 @@
       hero_desc: 'نبني برامج ومواقع وتطبيقات حديثة تحول الأعمال وتقود الابتكار في الصومال وشرق أفريقيا.',
       hero_cta1: 'استكشف الخدمات', hero_cta2: 'شاهد أعمالنا',
       stat_projects: 'مشاريع مكتملة', stat_clients: 'عملاء سعداء', stat_years: 'سنوات خبرة',
-      founder_credit: 'المبادر: <strong>صلاح أحمد عمر</strong>',
+      founder_credit: 'تأسيس: <strong>صلاح أحمد عمر</strong>',
     }
   };
 
