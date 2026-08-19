@@ -2791,6 +2791,33 @@ p:last-child {
   }
 }
 
+/* Hero Founder Credit */
+.hero-founder-credit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding: 0.6rem 1.2rem;
+  background: rgba(139,92,246,0.1);
+  border: 1px solid rgba(139,92,246,0.2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  color: var(--teal-light);
+  backdrop-filter: blur(10px);
+}
+
+.hero-founder-credit strong {
+  color: var(--white);
+  font-weight: 700;
+}
+
+.hero-founder-credit svg {
+  color: var(--accent-light);
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
 /* ============================================
    LANGUAGE SWITCHER
    ============================================ */
@@ -2896,7 +2923,7 @@ html[dir="rtl"] .lang-switcher {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  z-index: 999;
+  z-index: 9999;
 }
 
 .chatbot-toggle {
