@@ -349,39 +349,61 @@
      AI CHATBOT WIDGET — Multi-Language + Translation
      ============================================ */
 
-  /* ---- Exact Somali Greeting Map ---- */
+  /* ---- Input Sanitization ---- */
+  function sanitizeInput(text) {
+    return text
+      .replace(/['"``]+/g, '')
+      .replace(/[.,!?;:()\-—–]+/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+  }
+
+  /* ---- Exact Somali Greeting Map (IMMEDIATE match) ---- */
   var somaliGreetings = {
-    'asc': 1, 'salaam': 1, 'salama': 1, 'salaan': 1, 'soo dhowaw': 1,
-    'soo dhawoow': 1, 'hello': 1, 'kaa wanagsan': 1, 'subax wanagsan': 1,
-    'galab wanagsan': 1, 'habeen wanagsan': 1, 'wanagsan tahay': 1,
-    'iska warran': 1, 'waa sidee': 1, 'halkee tahay': 1, 'kaa yeelo': 1,
-    'mahadsanid': 1, 'nabadeysan': 1, 'salaanta': 1
+    'asc': 1, 'salaam': 1, 'salama': 1, 'salaan': 1,
+    'soo dhowaw': 1, 'soo dhawoow': 1,
+    'kaa wanagsan': 1, 'subax wanagsan': 1,
+    'galab wanagsan': 1, 'habeen wanagsan': 1,
+    'wanagsan tahay': 1, 'iska warran': 1,
+    'waa sidee': 1, 'halkee tahay': 1,
+    'kaa yeelo': 1, 'nabadeysan': 1, 'salaanta': 1,
+    'waaleykum': 1, 'waaleykuma': 1, 'salaan alaykum': 1
   };
 
-  /* ---- Language Detection (enhanced) ---- */
-  function detectLanguage(text) {
-    var t = text.trim().toLowerCase();
+  /* ---- Somali Thank-You Map ---- */
+  var somaliThanks = {
+    'mahadsanid': 1, 'mahadsanidhiin': 1, 'mahadsantahay': 1,
+    'mahadsantid': 1, 'waad mahadsan tahay': 1, 'aad mahadsan tahay': 1
+  };
 
-    // 1. Exact Somali greeting match
+  /* ---- Language Detection ---- */
+  function detectLanguage(text) {
+    var t = sanitizeInput(text);
+
+    // 1. Exact Somali greeting — IMMEDIATE match
     if (somaliGreetings[t]) return 'so';
 
-    // 2. Arabic: Arabic Unicode block
+    // 2. Exact Somali thank — IMMEDIATE match
+    if (somaliThanks[t]) return 'so';
+
+    // 3. Arabic: Arabic Unicode block
     if (/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/.test(t)) return 'ar';
 
-    // 3. Somali: common Somali words/patterns
-    var soWords = /\b(kaan|taan|waxaa|waa|aan|aad|ee|oo|ku|ka|la|iyo|sidoo|markaa|haddii|maxaa|sidee|qof|shirkad|nidaam|adeeg|bog|codsi|xirfad|macluumaad|khad|qiimo|laakiin|hambalyo|mahadsanid|soo dhawoow|guriga|guri|lacag|shaqo|qalab|mashruuc|farsamada|soomaaliya|waxbarasho|caafimaad|ganacsi|dhaqaale|technology|xoolaha|beeraha|diblomaasiyad|arimaha|bulshada|dowlad|gaadiidka|iwm|sidaa|darteed|markasta|qofkasta|wixii|kuwa|intaa|kale|ugu|badan|yara|dhexe|sare|hoose|weyn|yar)\b/i;
+    // 4. Somali: common Somali words/patterns
+    var soWords = /\b(kaan|taan|waxaa|waa|aan|aad|ee|oo|ku|ka|la|iyo|sidoo|markaa|haddii|maxaa|sidee|qof|shirkad|nidaam|adeeg|bog|codsi|xirfad|macluumaad|khad|qiimo|laakiin|hambalyo|mahadsanid|soo dhawoow|guriga|guri|lacag|shaqo|qalab|mashruuc|farsamada|soomaaliya|waxbarasho|caafimaad|ganacsi|dhaqaale|xoolaha|beeraha|diblomaasiyad|arimaha|bulshada|dowlad|gaadiidka|iwm|sidaa|darteed|markasta|qofkasta|wixii|kuwa|intaa|kale|ugu|badan|yara|dhexe|sare|hoose|weyn|yar)\b/i;
     if (soWords.test(t)) return 'so';
 
-    // 4. Turkish: special chars + common words
+    // 5. Turkish: special chars + common words
     if (/[çğıöşüÇĞİÖŞÜ]/.test(t)) return 'tr';
-    var trWords = /\b(merhaba|selam|nasıl|nedir|hizmet|iletişim|projeler|fiyat|teşekkür|şirket|gurey|yazılım|web|mobil|tasarım|hosting|dijital|hakkında|portföy|destek|telefon|e-posta|günaydın|iyi|kötü|evet|hayır|lütfen|teşekkür|merhaba)\b/i;
+    var trWords = /\b(merhaba|selam|nasıl|nedir|hizmet|iletişim|projeler|fiyat|teşekkür|şirket|gurey|yazılım|web|mobil|tasarım|hosting|dijital|hakkında|portföy|destek|telefon|e-posta|günaydın|iyi|kötü|evet|hayır|lütfen)\b/i;
     if (trWords.test(t)) return 'tr';
 
-    // 5. French: common French words
+    // 6. French: common French words
     var frWords = /\b(bonjour|salut|merci|société|entreprise|services|contact|portfolio|prix|coût|combien|développement|logiciel|site|mobile|conception|hébergement|marque|à propos|aujourd'hui|de quoi|offres|comment|pourquoi|bonsoir|oui|non|s'il vous plaît|je suis|nous|vous|très|aussi|bien|mais|avec|pour|dans|cest|peut|faire|tout|plus|mon|votre|notre)\b/i;
     if (frWords.test(t)) return 'fr';
 
-    // 6. English: default fallback
+    // 7. English: default fallback
     return 'en';
   }
 
@@ -473,28 +495,33 @@
     }
   };
 
-  /* ---- Intent Detection (language-agnostic) ---- */
+  /* ---- Intent Detection (uses sanitized input) ---- */
   function detectIntent(msg) {
-    var m = msg.toLowerCase();
+    var m = sanitizeInput(msg);
+
+    // IMMEDIATE Somali greeting bypass (return 'greeting' but caller forces 'so')
+    if (somaliGreetings[m]) return 'greeting';
+
+    // IMMEDIATE Somali thank bypass
+    if (somaliThanks[m]) return 'thank';
 
     // Greetings (all languages)
     if (/^(hello|hi|hey|howdy|yo|good\s*(morning|afternoon|evening))\b/.test(m)) return 'greeting';
-    if (/^(asc|salaam|salama|salaan|soo\s*dhowa|soo\s*dhawoow|kaa\s*wanagsan|subax\s*wanagsan|galab\s*wanagsan|habeen\s*wanagsan|wanagsan\s*tahay|iska\s*warran|waa\s*sidee|nabadeysan)\b/.test(m)) return 'greeting';
     if (/^(merhaba|selam|günaydın|iyi\s*günler|nasılsın)\b/.test(m)) return 'greeting';
     if (/^(bonjour|salut|coucou|bonsoir|comment\s*(allez|ça va))/.test(m)) return 'greeting';
     if (/^(مرحبا|أهلا|السلام عليكم|صباح|مساء|هاي|هلا)\b/.test(m)) return 'greeting';
 
     // Services
-    if (/\b(service|adeeg|_services|hizmet|développement|logiciel|yazılım|software|web|mobil|tasarım|design|hosting|branding|pazarlama|marketing|ai|erp|nidaam|xorriyad|horumar|samayn)\b/.test(m)) return 'services';
+    if (/\b(service|adeeg|hizmet|développement|logiciel|yazılım|software|web|mobil|tasarım|design|hosting|branding|pazarlama|marketing|ai|erp|nidaam|xorriyad|horumar|samayn)\b/.test(m)) return 'services';
     if (/\b(adeegy|bixi|xaal)\b/.test(m)) return 'services';
     if (/\b(خدمات|تطوير|تصميم|استضافة|تسويق)\b/.test(m)) return 'services';
 
     // Contact
-    if (/\b(contact|xiriir|iletişim|téléphone|telefon|phone|email|whatsapp|address|visited|reach|foofo|hel|qab|nagala\s*xiriir|how\s*can\s*i\s*(reach|contact|call))\b/.test(m)) return 'contact';
+    if (/\b(contact|xiriir|iletişim|téléphone|telefon|phone|email|whatsapp|address|visited|reach|foofo|hel|qab|nagala\s*xiriir)\b/.test(m)) return 'contact';
     if (/\b(اتصال|هاتف|بريد|تواصل)\b/.test(m)) return 'contact';
 
     // About / Company
-    if (/\b(about|who|what\s*is|tell\s*me\s*about|company|şirket|shirkad|société|hakkında|la\s*société|ka\s*guri|gurey|waa\s*maxay|maxaa\s* tahay|kumaa\s*ad\s*tihiin)\b/.test(m)) return 'about';
+    if (/\b(about|who|what\s*is|tell\s*me\s*about|company|şirket|shirkad|société|hakkında|la\s*société|ka\s*guri|gurey|waa\s*maxay|maxaa\s*tahay|kumaa\s*ad\s*tihiin)\b/.test(m)) return 'about';
     if (/\b(من\s*أنتم|عن\s*الشركة|شركة)\b/.test(m)) return 'about';
 
     // Portfolio
@@ -509,15 +536,26 @@
     if (/\b(founder|aasaasaha|aasaasay|kurucu|fondateur|المؤسس|salah\s*ahmed\s*omar|salah|omar)\b/.test(m)) return 'founder';
 
     // Thanks
-    if (/\b(thank|teşekkür|mahadsanid|mahadsantah|sacanid|merci|shukran|شكراً|teşekkürler)\b/.test(m)) return 'thank';
+    if (/\b(thank|teşekkür|merci|shukran|teşekkürler)\b/.test(m)) return 'thank';
 
     return 'default';
   }
 
-  /* ---- Main Response Generator (with translation fallback) ---- */
+  /* ---- Main Response Generator ---- */
   function getBotResponse(userMessage) {
+    var clean = sanitizeInput(userMessage);
     var lang = detectLanguage(userMessage);
     var intent = detectIntent(userMessage);
+
+    // IMMEDIATE Somali response for Somali greetings (no translation)
+    if (lang === 'so' && intent === 'greeting') {
+      return Promise.resolve(chatDB.so.greeting);
+    }
+
+    // IMMEDIATE Somali response for Somali thanks (no translation)
+    if (lang === 'so' && intent === 'thank') {
+      return Promise.resolve(chatDB.so.thank);
+    }
 
     // Fast path: pre-translated response available
     if (chatDB[lang] && chatDB[lang][intent]) {
@@ -532,7 +570,7 @@
     }
 
     // Use MyMemory API to translate
-    return translateText(enResponse, 'en', lang === 'so' ? 'so' : lang)
+    return translateText(enResponse, 'en', lang)
       .then(function(translated) {
         return translated;
       })
