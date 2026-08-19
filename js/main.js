@@ -279,4 +279,174 @@
     createWhatsAppButton();
   }
 
+  /* ============================================
+     LANGUAGE SWITCHER (EN / AR)
+     ============================================ */
+  const translations = {
+    en: {
+      brand: 'Gurey',
+      nav_home: 'Home', nav_about: 'About', nav_services: 'Services',
+      nav_solutions: 'Solutions', nav_portfolio: 'Portfolio', nav_contact: 'Contact Us',
+      cta_get_started: 'Get Started',
+      hero_badge: "Somalia's Leading Technology Company",
+      hero_title: "Empowering Somalia's <span>Digital</span> Future",
+      hero_desc: "We build modern software, websites, and mobile apps that transform businesses and drive innovation across Somalia and East Africa.",
+      hero_cta1: 'Explore Services', hero_cta2: 'View Our Work',
+      stat_projects: 'Projects Completed', stat_clients: 'Happy Clients', stat_years: 'Years Experience',
+    },
+    ar: {
+      brand: 'غوري',
+      nav_home: 'الرئيسية', nav_about: 'من نحن', nav_services: 'الخدمات',
+      nav_solutions: 'الحلول', nav_portfolio: 'أعمالنا', nav_contact: 'اتصل بنا',
+      cta_get_started: 'ابدأ الآن',
+      hero_badge: 'شركة التقنية الرائدة في الصومال',
+      hero_title: 'تمكين المستقبل <span>الرقمي</span> للصومال',
+      hero_desc: 'نبني برامج ومواقع وتطبيقات حديثة تحول الأعمال وتقود الابتكار في الصومال وشرق أفريقيا.',
+      hero_cta1: 'استكشف الخدمات', hero_cta2: 'شاهد أعمالنا',
+      stat_projects: 'مشاريع مكتملة', stat_clients: 'عملاء سعداء', stat_years: 'سنوات خبرة',
+    }
+  };
+
+  const langSwitcher = document.getElementById('langSwitcher');
+  let currentLang = localStorage.getItem('gurey_lang') || 'en';
+
+  function applyLanguage(lang) {
+    currentLang = lang;
+    const dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.setAttribute('dir', dir);
+    document.documentElement.setAttribute('lang', lang);
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (translations[lang] && translations[lang][key]) {
+        el.innerHTML = translations[lang][key];
+      }
+    });
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+
+    localStorage.setItem('gurey_lang', lang);
+  }
+
+  if (langSwitcher) {
+    langSwitcher.addEventListener('click', function(e) {
+      const btn = e.target.closest('.lang-btn');
+      if (btn) {
+        applyLanguage(btn.getAttribute('data-lang'));
+      }
+    });
+  }
+
+  if (currentLang !== 'en') {
+    applyLanguage(currentLang);
+  }
+
+  /* ============================================
+     AI CHATBOT WIDGET
+     ============================================ */
+  const chatbotResponses = {
+    "What services do you offer?": "Gurey Company offers a wide range of technology services including:\n\n- Software Development\n- Website Development\n- Mobile App Development\n- UI/UX Design\n- AI Solutions\n- Branding & Digital Marketing\n- Hosting & Domain\n- Business / ERP Solutions\n\nWould you like to know more about any specific service?",
+    "How can I contact you?": "You can reach us through:\n\n- Phone: +252 61 7684809\n- WhatsApp: +252 61 7684809\n- Email: saalahahmedomar123@gmail.com\n- Visit: Mogadishu, Somalia\n\nOr fill out the contact form on our Contact page!",
+    "What is Gurey Company?": "Gurey Company is Somalia's leading technology company, founded in Mogadishu in 2020. We specialize in building software, websites, and mobile apps that empower businesses across Somalia and East Africa.\n\nWith 200+ completed projects and 50+ happy clients, we bring global standards to the local market.",
+    "Show me your portfolio": "We've worked on exciting projects including:\n\n- Suuqa Muqdisho - E-Commerce Platform\n- SomaliRide - Mobile App\n- PrimePOS - Retail POS System\n\nVisit our Portfolio page to see all our work!",
+    "default": "Thank you for your interest! I'd be happy to help you with information about Gurey Company. You can ask about:\n\n- Our services\n- Contact information\n- Our company\n- Our portfolio\n\nOr call us at +252 61 7684809!"
+  };
+
+  const chatbotWidget = document.getElementById('chatbotWidget');
+  const chatbotToggle = document.getElementById('chatbotToggle');
+  const chatbotMinimize = document.getElementById('chatbotMinimize');
+  const chatbotWindow = document.getElementById('chatbotWindow');
+  const chatbotMessages = document.getElementById('chatbotMessages');
+  const chatbotForm = document.getElementById('chatbotForm');
+  const chatbotInput = document.getElementById('chatbotInput');
+
+  function toggleChatbot() {
+    chatbotWidget.classList.toggle('open');
+    if (chatbotWidget.classList.contains('open') && chatbotInput) {
+      setTimeout(() => chatbotInput.focus(), 300);
+    }
+  }
+
+  function getBotResponse(userMessage) {
+    const msg = userMessage.toLowerCase();
+    if (msg.includes('service') || msg.includes('what do you')) {
+      return chatbotResponses["What services do you offer?"];
+    }
+    if (msg.includes('contact') || msg.includes('phone') || msg.includes('email') || msg.includes('reach')) {
+      return chatbotResponses["How can I contact you?"];
+    }
+    if (msg.includes('about') || msg.includes('who') || msg.includes('what is gurey') || msg.includes('company')) {
+      return chatbotResponses["What is Gurey Company?"];
+    }
+    if (msg.includes('portfolio') || msg.includes('project') || msg.includes('work')) {
+      return chatbotResponses["Show me your portfolio"];
+    }
+    if (msg.includes('price') || msg.includes('cost') || msg.includes('how much')) {
+      return "Project costs vary depending on scope, features, and complexity. We offer competitive pricing tailored to the Somali market. Contact us for a free consultation and quote!\n\nPhone: +252 61 7684809";
+    }
+    if (msg.includes('hello') || msg.includes('hi') || msg.includes('hey')) {
+      return "Hello! Welcome to Gurey Company. How can I assist you today?";
+    }
+    if (msg.includes('thank')) {
+      return "You're welcome! If you have any other questions, feel free to ask. Have a great day!";
+    }
+    return chatbotResponses["default"];
+  }
+
+  function addUserMessage(text) {
+    const div = document.createElement('div');
+    div.className = 'chatbot-message user';
+    div.innerHTML = '<div class="chatbot-message-avatar">You</div><div class="chatbot-message-content"><p>' + escapeHtml(text) + '</p><span class="chatbot-message-time">Just now</span></div>';
+    chatbotMessages.appendChild(div);
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+  }
+
+  function addBotMessage(text) {
+    const typing = document.createElement('div');
+    typing.className = 'chatbot-message bot';
+    typing.innerHTML = '<div class="chatbot-message-avatar">G</div><div class="chatbot-message-content"><div class="chatbot-typing"><span></span><span></span><span></span></div></div>';
+    chatbotMessages.appendChild(typing);
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+    setTimeout(() => {
+      chatbotMessages.removeChild(typing);
+      const div = document.createElement('div');
+      div.className = 'chatbot-message bot';
+      div.innerHTML = '<div class="chatbot-message-avatar">G</div><div class="chatbot-message-content"><p>' + text.replace(/\n/g, '<br>') + '</p><span class="chatbot-message-time">Just now</span></div>';
+      chatbotMessages.appendChild(div);
+      chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    }, 1200);
+  }
+
+  function escapeHtml(text) {
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+    return text.replace(/[&<>"']/g, m => map[m]);
+  }
+
+  if (chatbotToggle) chatbotToggle.addEventListener('click', toggleChatbot);
+  if (chatbotMinimize) chatbotMinimize.addEventListener('click', toggleChatbot);
+
+  if (chatbotForm) {
+    chatbotForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const text = chatbotInput.value.trim();
+      if (!text) return;
+      addUserMessage(text);
+      chatbotInput.value = '';
+      addBotMessage(getBotResponse(text));
+    });
+  }
+
+  document.querySelectorAll('.chatbot-quick-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const reply = this.getAttribute('data-reply');
+      addUserMessage(reply);
+      addBotMessage(getBotResponse(reply));
+      const qrContainer = this.parentElement;
+      if (qrContainer) qrContainer.style.display = 'none';
+    });
+  });
+
 })();
